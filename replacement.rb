@@ -24,15 +24,14 @@ module ReplacementStrategy
         replace_cards = nil
 
       when $THREE_OF_A_KIND
-        # If 4 cards have same suit, replace odd one out, provided 
-        # it is not part of the triple
-        # Else replace the lower rank of the two odd one out
-        replace_cards = nil
+        # Replace the two odd one out
+        rank_frequencies = ReplacementStrategy.count_freq_rank(hand)
+        replace_cards = ReplacementStrategy.odd_ones_out_of_pairs_or_triples(hand, rank_frequencies)
 
       when $TWO_PAIR
         # Replace odd one out
         rank_frequencies = ReplacementStrategy.count_freq_rank(hand)
-        replace_cards = ReplacementStrategy.odd_one_out_of_two_pair(hand, rank_frequencies)
+        replace_cards = ReplacementStrategy.odd_ones_out_of_pairs_or_triples(hand, rank_frequencies)
 
       when $ONE_PAIR
         # If 4 cards have same suit, replace odd one out
@@ -42,7 +41,8 @@ module ReplacementStrategy
         if most_freq_suit_count == 4
           replace_cards = ReplacementStrategy.odd_one_out_of_four_same_suit(hand, suit_frequencies)
         else
-          replace_cards = nil
+          rank_frequencies = ReplacementStrategy.count_freq_rank(hand)
+          replace_cards = ReplacementStrategy.odd_ones_out_of_pairs_or_triples(hand, rank_frequencies)
         end
 
       when $HIGH_CARD
@@ -53,7 +53,7 @@ module ReplacementStrategy
         if most_freq_suit_count == 4
           replace_cards = ReplacementStrategy.odd_one_out_of_four_same_suit(hand, suit_frequencies)
         else
-          replace_cards = ReplacementStrategy.extract_three_lowest_ranked(hand)
+          replace_cards = ReplacementStrategy.extract_n_lowest_ranked(hand, 3)
         end
 
       else
@@ -140,104 +140,107 @@ module ReplacementStrategy
     [r2, r3, r4, r5, r6, r7, r8, r9, rT, rJ, rQ, rK, rA]
   end
 
-  def ReplacementStrategy.odd_one_out_of_four_of_a_kind(hand, arr)
+  def ReplacementStrategy.odd_one_out_of_four_of_a_kind(hand, rank_frequencies)
     hand.each do |card|
       case card[0]
         when '2' 
-          return card if arr[0] == 1 
+          return card if rank_frequencies[0] == 1 
         when '3' 
-          return card if arr[1] == 1
+          return card if rank_frequencies[1] == 1
         when '4' 
-          return card if arr[2] == 1
+          return card if rank_frequencies[2] == 1
         when '5' 
-          return card if arr[3] == 1
+          return card if rank_frequencies[3] == 1
         when '6' 
-          return '' if arr[4] == 1 # Replace if rank < 6
+          return '' if rank_frequencies[4] == 1 # Replace if rank < 6
         when '7' 
-          return '' if arr[5] == 1
+          return '' if rank_frequencies[5] == 1
         when '8' 
-          return '' if arr[6] == 1
+          return '' if rank_frequencies[6] == 1
         when '9' 
-          return '' if arr[7] == 1
+          return '' if rank_frequencies[7] == 1
         when 'T' 
-          return '' if arr[8] == 1
+          return '' if rank_frequencies[8] == 1
         when 'J' 
-          return '' if arr[9] == 1
+          return '' if rank_frequencies[9] == 1
         when 'Q' 
-          return '' if arr[10] == 1
+          return '' if rank_frequencies[10] == 1
         when 'K' 
-          return '' if arr[11] == 1
+          return '' if rank_frequencies[11] == 1
         when 'A' 
-          return '' if arr[12] == 1
+          return '' if rank_frequencies[12] == 1
         else 
           puts 'Error in odd_one_out_of_four_of_a_kind'
       end
     end
   end
 
-  def ReplacementStrategy.odd_one_out_of_two_pair(hand, arr)
-    hand.each do |card|
-      case card[0]
-        when '2' 
-          return card if arr[0] == 1
-        when '3' 
-          return card if arr[1] == 1
-        when '4' 
-          return card if arr[2] == 1
-        when '5' 
-          return card if arr[3] == 1
-        when '6' 
-          return card if arr[4] == 1
-        when '7' 
-          return card if arr[5] == 1
-        when '8' 
-          return card if arr[6] == 1
-        when '9' 
-          return card if arr[7] == 1
-        when 'T' 
-          return card if arr[8] == 1
-        when 'J' 
-          return card if arr[9] == 1
-        when 'Q' 
-          return card if arr[10] == 1
-        when 'K' 
-          return card if arr[11] == 1
-        when 'A' 
-          return card if arr[12] == 1
-        else 
-          puts 'Error in odd_one_out_of_two_pair'
-      end
-    end
-  end
-
-  def ReplacementStrategy.odd_one_out_of_four_same_suit(hand, arr)
+  def ReplacementStrategy.odd_one_out_of_four_same_suit(hand, suit_frequencies)
     hand.each do |card|
       case card[1]
         when 'c' 
-          return card if arr[0] == 1
+          return card if suit_frequencies[0] == 1
         when 'C' 
-          return card if arr[0] == 1
+          return card if suit_frequencies[0] == 1
         when 'd' 
-          return card if arr[1] == 1
+          return card if suit_frequencies[1] == 1
         when 'D' 
-          return card if arr[1] == 1
+          return card if suit_frequencies[1] == 1
         when 'h' 
-          return card if arr[2] == 1
+          return card if suit_frequencies[2] == 1
         when 'H' 
-          return card if arr[2] == 1
+          return card if suit_frequencies[2] == 1
         when 's' 
-          return card if arr[3] == 1
+          return card if suit_frequencies[3] == 1
         when 'S' 
-          return card if arr[3] == 1
+          return card if suit_frequencies[3] == 1
         else 
           puts 'Error in odd_one_out_of_four_same_suit'
       end
     end
   end
 
-  def ReplacementStrategy.extract_three_lowest_ranked(hand)
+  def ReplacementStrategy.odd_ones_out_of_pairs_or_triples(hand, rank_frequencies)
+    discards = Array.new
+
+    hand.each do |card|
+      case card[0]
+        when '2' 
+          discards << card if rank_frequencies[0] == 1
+        when '3' 
+          discards << card if rank_frequencies[1] == 1
+        when '4' 
+          discards << card if rank_frequencies[2] == 1
+        when '5' 
+          discards << card if rank_frequencies[3] == 1
+        when '6' 
+          discards << card if rank_frequencies[4] == 1
+        when '7' 
+          discards << card if rank_frequencies[5] == 1
+        when '8' 
+          discards << card if rank_frequencies[6] == 1
+        when '9' 
+          discards << card if rank_frequencies[7] == 1
+        when 'T' 
+          discards << card if rank_frequencies[8] == 1
+        when 'J' 
+          discards << card if rank_frequencies[9] == 1
+        when 'Q' 
+          discards << card if rank_frequencies[10] == 1
+        when 'K' 
+          discards << card if rank_frequencies[11] == 1
+        when 'A' 
+          discards << card if rank_frequencies[12] == 1
+        else 
+          puts 'Error in odd_two_out_of_one_pair'
+      end
+    end
+    discards
+  end
+
+  def ReplacementStrategy.extract_n_lowest_ranked(hand, n)
     hand.sort! { |x, y| ReplacementStrategy.get_rank_for(x[0]) <=> ReplacementStrategy.get_rank_for(y[0]) }
-    hand[0..2]
+    hand[0 .. n-1]
   end
 
   def ReplacementStrategy.get_rank_for(facevalue)

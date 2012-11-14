@@ -7,6 +7,7 @@ require 'logger'
 
 require "./constants"
 require "./replacement"
+require "./tests"
 
 # Send a GET request and returns response
 def game_state(player_key, get_endpoint)
@@ -30,7 +31,8 @@ def poker_player(player_key, get_endpoint, post_endpoint)
     turn_data = JSON.parse(response.body)
 
     ### OVERRIDES ###
-    turn_data['hand'] = ['2s', '5c', '3d', '4h', '7s']
+    prng = Random.new
+    turn_data['hand'] = $TEST_HANDS[prng.rand(0 .. $TEST_HANDS.size-1)]
     turn_data['betting_phase'] = 'draw'
     ### OVERRIDES ###
 
@@ -218,5 +220,5 @@ if __FILE__ == $0
   @@logger = Logger.new('log.txt')
   @@logger.datetime_format = "%H:%M:%S"
   @@logger.level = Logger::INFO
-  poker_player($SANDBOX_KEY_REPLACE, $SANDBOX_GET_ENDPOINT, $SANDBOX_POST_ENDPOINT)
+  poker_player($SANDBOX_KEY_BET, $SANDBOX_GET_ENDPOINT, $SANDBOX_POST_ENDPOINT)
 end
