@@ -3,6 +3,12 @@ enova-purdue
 
 This is my awesome sauce program for attempting to win Enova's poker hackathon.
 
+To execute the program:
+- `make`
+- `ruby connector.rb`
+- ???
+- profit!
+
 Thanks to
 =========
 
