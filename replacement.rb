@@ -272,5 +272,4 @@ module ReplacementStrategy
         puts 'Error in get_rank_for'
     end
   end
-
 end

@@ -37,7 +37,6 @@ def poker_player(player_key, get_endpoint, post_endpoint)
     pretty_print_data(turn_data)
 
     if turn_data.has_key?('your_turn') && turn_data['your_turn']
-      puts "--------- MY TURN ----------"
       rank = obtain_rank(turn_data['hand'])
 
       ### DEAL OR POST_DRAW ###
@@ -48,7 +47,7 @@ def poker_player(player_key, get_endpoint, post_endpoint)
         @@logger.warn('POST action: ' + action_and_bet[0])
         @@logger.warn('POST amount: ' + action_and_bet[1].to_s)
 
-        my_action = { action: action_and_bet[0], amount: action_and_bet[1], cards: nil }
+        my_action = { action: action_and_bet[0], amount: action_and_bet[1] }
 
       ### DRAW ###
       elsif turn_data['betting_phase'] == 'draw'
@@ -58,8 +57,9 @@ def poker_player(player_key, get_endpoint, post_endpoint)
         @@logger.warn('POST action: ' + action)
         @@logger.warn('POST cards: ' + discards.to_s)
 
-        my_action = { action: action, amount: nil, cards: discards }
+        my_action = { action: action, cards: discards }
 
+      ### SHOWDOWN ###
       else
         @@logger.warn('SHOWDOWN!')
       end
