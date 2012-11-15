@@ -59,7 +59,7 @@ void print_rank(int rank) {
     case HIGH_CARD:       str = "HIGH_CARD";        break;
     default:              str = "NOT_FOUND";        break;
   }
-  printf("Your rank is: %s (%d)\n", str, rank);
+  printf("Rank: %s (%d)\n", str, rank);
 }
 
 int main(int argc, char *argv[]) {
@@ -95,16 +95,16 @@ int main(int argc, char *argv[]) {
   int c4_index = find_card(r4, s4, deck);
   int c5_index = find_card(r5, s5, deck);
 
-  if (c1_index == -1)
-    printf("c1_index is invalid\n");
-  if (c2_index == -1)
-    printf("c2_index is invalid\n");
-  if (c3_index == -1)
-    printf("c3_index is invalid\n");
-  if (c4_index == -1)
-    printf("c4_index is invalid\n");
-  if (c5_index == -1)
-    printf("c5_index is invalid\n");
+  if (c1_index == -1 || r1 == 99 || s1 == 99)
+    printf("!!!!! c1_index is invalid !!!!!\n");
+  if (c2_index == -1 || r2 == 99 || s2 == 99)
+    printf("!!!!! c2_index is invalid !!!!!\n");
+  if (c3_index == -1 || r3 == 99 || s3 == 99)
+    printf("!!!!! c3_index is invalid !!!!!\n");
+  if (c4_index == -1 || r4 == 99 || s4 == 99)
+    printf("!!!!! c4_index is invalid !!!!!\n");
+  if (c5_index == -1 || r5 == 99 || s5 == 99)
+    printf("!!!!! c5_index is invalid !!!!!\n");
 
   int c1 = deck[c1_index];
   int c2 = deck[c2_index];

@@ -5,7 +5,6 @@ module ReplacementStrategy
   # Compute replacement cards for hand with rank
   def ReplacementStrategy.compute_replacement(rank, hand)
     case rank
-
       when $STRAIGHT_FLUSH 
         replace_cards = nil
 
@@ -37,7 +36,7 @@ module ReplacementStrategy
         # If 4 cards have same suit, replace odd one out
         # Else replace the three odd one out
         suit_frequencies = ReplacementStrategy.count_freq_suit(hand)
-        most_freq_suit_count = ReplacementStrategy.count_most_freq_suit_count(suit_frequencies)
+        most_freq_suit_count = suit_frequencies.max
         if most_freq_suit_count == 4
           replace_cards = ReplacementStrategy.odd_one_out_of_four_same_suit(hand, suit_frequencies)
         else
@@ -49,7 +48,7 @@ module ReplacementStrategy
         # If 4 cards have same suit, replace odd one out
         # Else replace the three lowest ranked cards
         suit_frequencies = ReplacementStrategy.count_freq_suit(hand)
-        most_freq_suit_count = ReplacementStrategy.count_most_freq_suit_count(suit_frequencies)
+        most_freq_suit_count = suit_frequencies.max
         if most_freq_suit_count == 4
           replace_cards = ReplacementStrategy.odd_one_out_of_four_same_suit(hand, suit_frequencies)
         else
@@ -94,10 +93,6 @@ module ReplacementStrategy
     end
 
     [c, d, h, s]
-  end
-
-  def ReplacementStrategy.count_most_freq_suit_count(arr)
-    arr.max
   end
 
   def ReplacementStrategy.count_freq_rank(hand)
@@ -232,7 +227,7 @@ module ReplacementStrategy
         when 'A' 
           discards << card if rank_frequencies[12] == 1
         else 
-          puts 'Error in odd_two_out_of_one_pair'
+          puts 'Error in odd_ones_out_of_pairs_or_triples'
       end
     end
     discards

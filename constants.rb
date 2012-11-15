@@ -38,17 +38,15 @@ module Constants
   $NOT_FOUND_STR       = 'NOT_FOUND'
 
   # Betting weights
-  $STRAIGHT_FLUSH_WT  = 1
-  $FOUR_OF_A_KIND_WT  = 0.8
-  $FULL_HOUSE_WT      = 0.7
-  $FLUSH_WT           = 0.65
-  $STRAIGHT_WT        = 0.6
-  $THREE_OF_A_KIND_WT = 0.4
-  $TWO_PAIR_WT        = 0.3
-  $ONE_PAIR_WT        = 0.25
-  $HIGH_CARD_WT       = 0.2
-
-  $BETTING_MAX_WT     = 0.75
+  $STRAIGHT_FLUSH_WT  = 1             #  0.0015
+  $FOUR_OF_A_KIND_WT  = 1             #  0.0240
+  $FULL_HOUSE_WT      = 0.95          #  0.1440
+  $FLUSH_WT           = 0.9           #  0.1965
+  $STRAIGHT_WT        = 0.8           #  0.3924
+  $THREE_OF_A_KIND_WT = 0.7           #  2.11
+  $TWO_PAIR_WT        = 0.4           #  4.75
+  $ONE_PAIR_WT        = 0.2           # 42.25
+  $HIGH_CARD_WT       = 0.15          # 50.11
 
   # Rank values for face values
   $RANK_2 = 0
@@ -64,5 +62,11 @@ module Constants
   $RANK_Q = 10
   $RANK_K = 11
   $RANK_A = 12
+
+  $STEAM_ROLL_MODE_CUTOFF = 0.25
+
+  $NORMAL_MODE        = 1
+  $STEAM_ROLL_MODE    = 2
+  $BETTING_MODE       = $NORMAL_MODE
 
 end
