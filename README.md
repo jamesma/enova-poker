@@ -4,7 +4,7 @@ enova-purdue
 This is my program for attempting to win [Enova's poker hackathon][].
 
 To execute the program:
-- Compile the __allfive__ executatble: `make`
+- Compile the __allfive__ executable: `make`
 - Run the Ruby program: `ruby connector.rb`
 - ???
 - profit
