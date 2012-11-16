@@ -20,20 +20,13 @@ end
 
 # Send a POST request
 def player_action(player_key, post_endpoint, my_action)
-  uri = URI(post_endpoint + player_key + $POST_ACTION)
-  # response = Net::HTTP.post_form(uri, my_action)
+  uri = URI.parse(post_endpoint + player_key + $POST_ACTION)
 
-  http = Net::HTTP.new(uri.host, uri.port)
-  request = Net::HTTP::Post.new(uri.request_uri)
-  request.set_form_data(my_action)
-
-  request["Content-Type"] = "application/json"
-
-  response = http.request(request)
+  response = Net::HTTP.post_form(uri, my_action)
 
   # Status
   @@logger.warn('')
-  @@logger.warn('Post Response Status: ' + response.code.to_s + ' ' + response.message.to_s)
+  @@logger.warn('POST Response Status: ' + response.code.to_s + ' ' + response.message.to_s)
 end
 
 # Poker player infinite loop
@@ -47,7 +40,7 @@ def poker_player(player_key, get_endpoint, post_endpoint)
     turn_data = JSON.parse(response.body)
 
     ### OVERRIDES ###
-    prng = Random.new
+    # prng = Random.new
     # turn_data['hand'] = $TEST_HANDS[prng.rand(0 .. $TEST_HANDS.size-1)]
     # # turn_data['minimum_bet'] = 150
     # turn_data['betting_phase'] = 'deal'
@@ -61,7 +54,7 @@ def poker_player(player_key, get_endpoint, post_endpoint)
 
       ### DEAL OR POST_DRAW ###
       if turn_data['betting_phase'] == 'deal' || turn_data['betting_phase'] == 'post_draw'
-        bet = compute_bet(rank, turn_data['minimum_bet'], turn_data['maximum_bet'], turn_data['current_bet'])
+        bet = compute_bet(rank, turn_data['minimum_bet'], turn_data['maximum_bet'], turn_data['current_bet'], turn_data)
 
         max_initial_stack = set_betting_mode(turn_data)
 
@@ -81,7 +74,12 @@ def poker_player(player_key, get_endpoint, post_endpoint)
         @@logger.warn('POST action: ' + action_and_bet[0])
         @@logger.warn('POST amount: ' + action_and_bet[1].to_s)
 
-        my_action = { action: action_and_bet[0], amount: action_and_bet[1] }
+        if action_and_bet[0] == 'fold'
+          # Dont send amount if action is fold
+          my_action = { action_name: action_and_bet[0] }
+        else
+          my_action = { action_name: action_and_bet[0], amount: action_and_bet[1] }
+        end
 
       ### DRAW ###
       elsif turn_data['betting_phase'] == 'draw'
@@ -91,18 +89,18 @@ def poker_player(player_key, get_endpoint, post_endpoint)
         @@logger.warn('POST action: ' + action)
         @@logger.warn('POST cards: ' + discards.to_s)
 
-        my_action = { action: action, cards: discards }
+        my_action = { action_name: action, cards: discards }
       end
-    end
 
-    # SEND POST REQUEST
-    player_action(player_key, post_endpoint, my_action)
+      # SEND POST REQUEST
+      player_action(player_key, post_endpoint, my_action)
+    end
   end
 end
 
 # Sets betting mode and returns max_initial_stack
 def set_betting_mode(turn_data)
-  max_initial_stack = NeighborhoodWatch.get_max_initial_stack(turn_data['players_at_table'])
+  max_initial_stack = NeighborhoodWatch.get_max_initial_stack(turn_data)
   cutoff = turn_data['initial_stack'] * $STEAM_ROLL_MODE_CUTOFF
 
   # Steam roll mode is set if cutoff is met
@@ -269,7 +267,7 @@ def extract_round_history(turn_data)
     history = ''
 
     round_history.each do |match|
-      history << match['stack_change'].to_s unless match['stack_change'].nil?
+      history << ' ' << match['stack_change'].to_s unless match['stack_change'].nil?
     end
 
     @@logger.info('round_history: ' + history) unless history.empty?
@@ -285,5 +283,5 @@ if __FILE__ == $0
   @@other_logger = Logger.new('other_log.txt')
   @@other_logger.datetime_format = "%H:%M:%S"
   @@other_logger.level = Logger::INFO
-  poker_player($SANDBOX_KEY_REPLACE, $SANDBOX_GET_ENDPOINT, $SANDBOX_POST_ENDPOINT)
+  poker_player($PLAYER_KEY, $ENOVA_GET_ENDPOINT, $ENOVA_POST_ENDPOINT)
 end

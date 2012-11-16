@@ -116,7 +116,7 @@ int main(int argc, char *argv[]) {
 
   int rank = hand_rank(eval_5cards(c1, c2, c3, c4, c5));
 
-  print_rank(rank);
+  // print_rank(rank);
 
   return rank;
 }
